@@ -181,12 +181,23 @@ class gasguzlrbackend():
         rows=cursor.fetchall()
         return len(rows)!=0
     
-    def countMPGEntries(self,vehicleid):
+    def countMPGEntries(self,userid):
         query='''
-        SELECT * FROM [gasgzlr].[dbo].[mpgdata]
-        WHERE vehicleID = ? 
+        SELECT gasgzlr.dbo.users.userID, gasgzlr.dbo.vehicles.vehicleID,gasgzlr.dbo.mpgdata.tankMiles
+,gasgzlr.dbo.mpgdata.fillGallons,gasgzlr.dbo.mpgdata.calcMPG
+
+
+  FROM [gasgzlr].[dbo].[users] join gasgzlr.dbo.vehicles on gasgzlr.dbo.users.userID=gasgzlr.dbo.vehicles.userID 
+  join gasgzlr.dbo.mpgdata on gasgzlr.dbo.vehicles.vehicleID =gasgzlr.dbo.mpgdata.vehicleID
+
+  WHERE
+  gasgzlr.dbo.users.userID=? 
         '''
         cursor = self.connecttodb().cursor()
-        c=cursor.execute(query,(vehicleid))
-        rows=cursor.fetchall()
-        return len(rows)
+        c=cursor.execute(query,(userid))
+        rows=c.fetchall()
+        data=[]
+        for row in rows:
+            data.append(row)
+
+        return len(data)
