@@ -43,8 +43,7 @@ class gasguzlrbackend():
     def addmpgData(self, vehicleid, tankmiles, fillgallons):
 
         query = '''
-        USE gasgzlr
-        GO
+        
 
         INSERT INTO mpgdata(vehicleID,tankMiles,fillGallons,calcMPG) VALUES(?,?,?,?)'''
         cursor = self.connecttodb().cursor()
