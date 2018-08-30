@@ -40,36 +40,19 @@ class gasguzlrbackend():
         #finally:
         
 
-    def addmpgData(self, vehicleid, tankmiles, fillgallons,calcmpg):
+    def addmpgData(self, vehicleid, tankmiles, fillgallons):
 
         query = '''
-      
+        
 
         INSERT INTO mpgdata(vehicleID,tankMiles,fillGallons,calcMPG) VALUES(?,?,?,?)'''
         cursor = self.connecttodb().cursor()
-        cursor.execute(query, (vehicleid, tankmiles, fillgallons, calcmpg))
-        cursor.commit()
-        # try:
-        #     
-        # except:
-        #     print("error in mpg data add")
-        
-    def getmpgData(self, vehicleid):
-    
-        query = '''
-        
-        SELECT (vehicleID,tankMiles,fillGallons,calcMPG) FROM mpgdata WHERE vehicleID = ?
-        '''
-       
-        cursor = self.connecttodb().cursor()
-        
+        calcmpg = tankmiles/fillgallons
         try:
-            cursor.execute(query, (vehicleid))
-            rows=cursor.fetchall()
-            return rows
+            cursor.execute(query, (vehicleid, tankmiles, fillgallons, calcmpg))
         except:
-            print("error in mpg data get")
-        
+            print("error in mpg data add")
+        pass
 
     def updateMPGData(self, vehicleid, tankmiles, fillgallons, calcmpg):
         query = '''
@@ -141,7 +124,7 @@ class gasguzlrbackend():
         except:
             print("error in vehicle data add")
 
-        
+        pass
 
     def deletevehicle(self, vehicleid):
         query = '''

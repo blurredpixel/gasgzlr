@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Title</title>
+    <title>Welcome {{ user }}</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -22,16 +22,73 @@
     <div class="container p-3 mb-2 bg-light text-dark text-center">
         {% if mpgcount ==0%}
         <h1>NO MPG ENTRIES, CREATE YOUR FIRST ONE :)</h1>
-        <form action="" method="post" role="form">
-                <div class="form-group">
-                    <label for=""></label>
-                    <input type="text" class="form-control" name="tripmiles" id="tripmiles" aria-describedby="helpId" placeholder="">
-                    <small id="helpId" class="form-text text-muted">Enter Trip Miles</small>
-                    <input type="text" class="form-control" name="tankGallons" id="tankGallons" aria-describedby="helpId" placeholder="">
-                    <small id="helpId" class="form-text text-muted">Enter FillUp Gallons</small>
-                    <button type="submit" class="btn btn-dark">Add Entry</button>
+
+        <div class="container text-center">
+           
+                <!-- Trigger the modal with a button -->
+                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">New Entry</button>
+
+              
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" role="dialog">
+                  <div class="modal-dialog">
+                  
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Modal Header</h4>
+                      </div>
+                      <div class="modal-body">
+                            <form action="" method="post" role="form">
+                                    <div class="form-group">
+                                        <label for=""></label>
+                                        <input type="text" class="form-control" name="tripmiles" id="tripmiles" aria-describedby="helpId" placeholder="">
+                                        <small id="helpId" class="form-text text-muted">Enter Trip Miles</small>
+                                        <input type="text" class="form-control" name="tankGallons" id="tankGallons" aria-describedby="helpId" placeholder="">
+                                        <small id="helpId" class="form-text text-muted">Enter FillUp Gallons</small>
+                                        <button type="submit" class="btn btn-dark">Add Entry</button>
+                                    </div>
+                                </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                    
+                  </div>
                 </div>
-            </form>
+                
+              </div>
+
+
+
+        
+        {% else %}
+
+        <h3>User: {{user}} </h3>
+        <div class="container text-center">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>VehicleID</th>
+                    <th>Trip Miles</th>
+                    <th>Fill-Up Gallons</th>
+                    <th>MPG</th>
+                </tr>
+            </thead>
+            {% for row in rows %}
+            <tbody>
+                <tr>
+                    <td scope="row">{{ vehicleid }}</td>
+                    <td> {{ row.tankMiles }} </td>
+                    <td>{{ row.fillGallons }}</td>
+                    <td> {{ row.calcMPG }} </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
         {% endif %}
 
         
