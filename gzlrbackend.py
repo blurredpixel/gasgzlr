@@ -54,22 +54,23 @@ class gasguzlrbackend():
         # except:
         #     print("error in mpg data add")
         
-    def getmpgData(self, vehicleid):
+    def getmpgData(self, vehid):
     
         query = '''
         
-        SELECT (vehicleID,tankMiles,fillGallons,calcMPG) FROM mpgdata WHERE vehicleID = ?
+        SELECT * FROM mpgdata WHERE vehicleID = ?
         '''
        
         cursor = self.connecttodb().cursor()
         
-        try:
-            cursor.execute(query, (vehicleid))
-            rows=cursor.fetchall()
-            return rows
-        except:
-            print("error in mpg data get")
-        
+    # try:
+        print(vehid)
+        cursor.execute(query, (vehid))
+        rows=cursor.fetchall()
+            
+            
+       
+        return rows
 
     def updateMPGData(self, vehicleid, tankmiles, fillgallons, calcmpg):
         query = '''
@@ -97,18 +98,7 @@ class gasguzlrbackend():
             cursor.execute(query, (vehicleid))
         except:
             print("error in MPG data delte")
-    def getMPGData(self, vehicleid):
-        query = '''
-        SELECT * FROM mpgdata
-        WHERE vehicleID = ?
-        
-        '''
-
-        cursor = self.connecttodb().cursor()
-        try:
-            cursor.execute(query, (vehicleid))
-        except:
-            print("error in MPG data get")
+    
 
     def deleteuserdata(self, userid):
         query = '''
@@ -141,7 +131,17 @@ class gasguzlrbackend():
         except:
             print("error in vehicle data add")
 
-        
+    def newaddvehicle(self,userid,vehicleid):
+        query=        '''
+            INSERT INTO newvehicles(vehicleid,userid) VALUES(?,?)
+        '''  
+        cursor = self.connecttodb().cursor()
+        #vehicleid= self.genvehicleid()
+        try:
+            cursor.execute(query, (vehicleid, userid))
+            cursor.commit()
+        except:
+            print("error in vehicle data add")
 
     def deletevehicle(self, vehicleid):
         query = '''
@@ -183,12 +183,12 @@ class gasguzlrbackend():
     
     def countMPGEntries(self,userid):
         query='''
-        SELECT gasgzlr.dbo.users.userID, gasgzlr.dbo.vehicles.vehicleID,gasgzlr.dbo.mpgdata.tankMiles
+        SELECT gasgzlr.dbo.users.userID, gasgzlr.dbo.newvehicles.vehicleid,gasgzlr.dbo.mpgdata.tankMiles
 ,gasgzlr.dbo.mpgdata.fillGallons,gasgzlr.dbo.mpgdata.calcMPG
 
 
-  FROM [gasgzlr].[dbo].[users] join gasgzlr.dbo.vehicles on gasgzlr.dbo.users.userID=gasgzlr.dbo.vehicles.userID 
-  join gasgzlr.dbo.mpgdata on gasgzlr.dbo.vehicles.vehicleID =gasgzlr.dbo.mpgdata.vehicleID
+  FROM [gasgzlr].[dbo].[users] join gasgzlr.dbo.newvehicles on gasgzlr.dbo.users.userID=gasgzlr.dbo.newvehicles.userid 
+  join gasgzlr.dbo.mpgdata on gasgzlr.dbo.newvehicles.vehicleid =gasgzlr.dbo.mpgdata.vehicleID
 
   WHERE
   gasgzlr.dbo.users.userID=? 
@@ -201,3 +201,16 @@ class gasguzlrbackend():
             data.append(row)
 
         return len(data)
+    
+    def getvehicle(self,userid):
+        query='''
+        select vehicleid from dbo.newvehicles where userid=?
+        '''
+        cursor = self.connecttodb().cursor()
+        c=cursor.execute(query,(userid))
+        rows=c.fetchone()
+        # data=[]
+        # for row in rows:
+        #     data.append(row)
+
+        return rows

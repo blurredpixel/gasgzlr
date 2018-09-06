@@ -52,16 +52,18 @@ def userlogin():
 @app.route('/mpg/<username>',methods=['GET','POST'])
 def mpgapp(username):
     #form=mpgForm(request.form)
-    vehcid=gasguzlrbackend().genvehicleid()
+    
     
     if request.method == 'POST':
+        
+        vehcid=gasguzlrbackend().genvehicleid()
         mpgcalc=float(request.form['tripmiles'])/float(request.form['tankGallons'])
         print(request.form['tripmiles'])
         print(request.form['tankGallons'])
         print(mpgcalc)
 
         gasguzlrbackend().addmpgData(vehcid,request.form['tripmiles'],request.form['tankGallons'],mpgcalc)
-       
+        gasguzlrbackend().newaddvehicle(username,vehcid)
       
         url="/mpg/"+username
         return redirect(url)
@@ -69,35 +71,39 @@ def mpgapp(username):
         mpgcount=gasguzlrbackend().countMPGEntries(username)
         print(mpgcount)
         if(mpgcount == 0):
+            
             return render_template('mpg.html',mpgcount=mpgcount)
         else:
-            mpgdata=gasguzlrbackend().getMPGData(vehcid)
-            return render_template('mpg.html',data=mpgdata,mpgcount=mpgcount,user=username)
+            
+            vehcid=gasguzlrbackend().getvehicle(username)
+            print(vehcid.vehicleid)
+            mpgdata=gasguzlrbackend().getmpgData(vehcid.vehicleid)
+            print(mpgdata)
+            return render_template('mpg.html',data=mpgdata,mpgcount=mpgcount,user=username,vehicleid=vehcid)
 
-@app.route('/vehicle/<username>',methods=['GET','POST'])
-def vehicleapp(username):
-    #form=mpgForm(request.form)
-    vehcid=gasguzlrbackend().genvehicleid()
-    
+@app.route('/mpg/<username>/<vehcid>/new', methods=['GET','POST'])
+def newmpgentry(username,vehcid):
     if request.method == 'POST':
+        #vehcid=gasguzlrbackend().genvehicleid()
         mpgcalc=float(request.form['tripmiles'])/float(request.form['tankGallons'])
-        print(request.form['vehiclemake'])
-        print(request.form['vehiclemodel'])
+        print(request.form['tripmiles'])
+        print(request.form['tankGallons'])
         print(mpgcalc)
 
-        gasguzlrbackend().addvehicle(username,request.form['vehiclemake'],request.form['vehiclemodel'],request.form['vehicleyear'])
-       
+        gasguzlrbackend().addmpgData(vehcid,request.form['tripmiles'],request.form['tankGallons'],mpgcalc)
+        gasguzlrbackend().newaddvehicle(username,vehcid)
       
-        url="/vehicle/"+username
+        url="/mpg/"+username
         return redirect(url)
     else:
-        vehiclecount=gasguzlrbackend().vehiclecount(username) #TODO
-        print(mpgcount)
-        if(vehiclecount == 0):
-            return render_template('newvehicle.html',vehiclecount=vehiclecount)
-        else:
-            mpgdata=gasguzlrbackend().getMPGData(vehcid)
-            return render_template('newvehicle.html',data=mpgdata,vehiclecount=vehiclecount,user=username)
+
+        
+            
+        vehcid=gasguzlrbackend().getvehicle(username)
+        print(vehcid.vehicleid)
+        mpgdata=gasguzlrbackend().getmpgData(vehcid.vehicleid)
+        print(mpgdata)
+        return render_template('newmpg.html',data=mpgdata,user=username,vehicleid=vehcid)
 
 
 
