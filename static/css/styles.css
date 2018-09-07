@@ -1,8 +1,20 @@
 h1{
-    background-color: blueviolet;
+    background-color: rgb(93, 228, 154);
 }
 
 #modaltitle
 {
     text-align: center
+}
+.nav-item
+{
+    padding-bottom: 5px
+}
+
+#navcontainer
+{
+    border-style: solid;
+    border-color: rgb(53, 129, 98);
+    border-width: 1px;
+
 }
