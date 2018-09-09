@@ -8,13 +8,8 @@ h1{
 }
 .nav-item
 {
-    padding-bottom: 5px
+    padding-bottom: 5px;
+    padding-left: 5px;
+    
 }
 
-#navcontainer
-{
-    border-style: solid;
-    border-color: rgb(53, 129, 98);
-    border-width: 1px;
-
-}

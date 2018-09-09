@@ -177,21 +177,35 @@ class gasguzlrbackend():
         WHERE userID = ? 
         '''
         cursor = self.connecttodb().cursor()
-        c=cursor.execute(query,(userid))
-        rows=cursor.fetchall()
-        return len(rows)!=0
-    
+        cursor.execute(query,(userid))
+        rows=cursor.fetchone()
+        
+        return str(rows.userID)==userid
+        
+    def authuser(self,userid):
+        query='''
+        UPDATE users
+        SET auth=?
+        WHERE userID=?
+        '''
+        cursor = self.connecttodb().cursor()
+        cursor.execute(query,'1',userid)
+        cursor.commit()
+
+
+
+
     def countMPGEntries(self,userid):
         query='''
         SELECT gasgzlr.dbo.users.userID, gasgzlr.dbo.newvehicles.vehicleid,gasgzlr.dbo.mpgdata.tankMiles
-,gasgzlr.dbo.mpgdata.fillGallons,gasgzlr.dbo.mpgdata.calcMPG
+        ,gasgzlr.dbo.mpgdata.fillGallons,gasgzlr.dbo.mpgdata.calcMPG
 
 
-  FROM [gasgzlr].[dbo].[users] join gasgzlr.dbo.newvehicles on gasgzlr.dbo.users.userID=gasgzlr.dbo.newvehicles.userid 
-  join gasgzlr.dbo.mpgdata on gasgzlr.dbo.newvehicles.vehicleid =gasgzlr.dbo.mpgdata.vehicleID
+        FROM [gasgzlr].[dbo].[users] join gasgzlr.dbo.newvehicles on gasgzlr.dbo.users.userID=gasgzlr.dbo.newvehicles.userid 
+        join gasgzlr.dbo.mpgdata on gasgzlr.dbo.newvehicles.vehicleid =gasgzlr.dbo.mpgdata.vehicleID
 
-  WHERE
-  gasgzlr.dbo.users.userID=? 
+        WHERE
+        gasgzlr.dbo.users.userID=? 
         '''
         cursor = self.connecttodb().cursor()
         c=cursor.execute(query,(userid))

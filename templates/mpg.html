@@ -1,4 +1,13 @@
 {% extends "base.html" %}
+{% block logout %}
+<li class="nav-item">
+    <form action="{{ url_for('logout')  }}" method="GET" >
+        <button type="submit" class="btn btn-dark">Logout</button>
+    
+    </form>
+</li>
+{% endblock %}
+
 {% block content %}
 {% if mpgcount ==0%}
         <h1>NO MPG ENTRIES, CREATE YOUR FIRST ONE :)</h1>
