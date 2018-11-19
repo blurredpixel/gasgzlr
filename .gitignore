@@ -111,3 +111,4 @@ dmypy.json
 
 requirements.txt
 config.json
+.vscode
