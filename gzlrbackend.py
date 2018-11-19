@@ -10,10 +10,7 @@ class gasguzlrbackend():
         conn = pyodbc.connect('DSN=gzlr;UID=gzlr;PWD=AUhf2LX%!8??mbDc')
         return conn
 
-    def getVersion(self):
-        cursor = self.connecttodb().cursor()
-        cursor.execute("SELECT @@VERSION")
-        return cursor.fetchone()
+    
     def genuserid(self):
         userid = ''.join(random.choices(
             string.ascii_letters + string.digits, k=8))
@@ -30,14 +27,13 @@ class gasguzlrbackend():
         
         '''
         cursor = self.connecttodb().cursor()
-        #try:
-        print(userid)
-        print(createdate)
-        cursor.execute(query, (userid, createdate))
-        cursor.commit()
-        #except:
-        #    print("error in user add")
-        #finally:
+        try:
+        
+            cursor.execute(query, (userid, createdate))
+            cursor.commit()
+        except:
+           print("error in user add")
+        
         
 
     def addmpgData(self, vehicleid, tankmiles, fillgallons,calcmpg):
@@ -47,12 +43,12 @@ class gasguzlrbackend():
 
         INSERT INTO mpgdata(vehicleID,tankMiles,fillGallons,calcMPG) VALUES(?,?,?,?)'''
         cursor = self.connecttodb().cursor()
-        cursor.execute(query, (vehicleid, tankmiles, fillgallons, calcmpg))
-        cursor.commit()
-        # try:
-        #     
-        # except:
-        #     print("error in mpg data add")
+        
+        try:
+            cursor.execute(query, (vehicleid, tankmiles, fillgallons, calcmpg))
+            cursor.commit()
+        except:
+            print("error in mpg data add")
         
     def getmpgData(self, vehid):
     
@@ -63,14 +59,16 @@ class gasguzlrbackend():
        
         cursor = self.connecttodb().cursor()
         
-    # try:
-        print(vehid)
-        cursor.execute(query, (vehid))
-        rows=cursor.fetchall()
-            
-            
-       
-        return rows
+        try:
+            print(vehid)
+            cursor.execute(query, (vehid))
+            rows=cursor.fetchall()
+                
+                
+        
+            return rows
+        except:
+            print("error in mpg data retrieval ")
 
     def updateMPGData(self, vehicleid, tankmiles, fillgallons, calcmpg):
         query = '''
@@ -136,7 +134,7 @@ class gasguzlrbackend():
             INSERT INTO newvehicles(vehicleid,userid) VALUES(?,?)
         '''  
         cursor = self.connecttodb().cursor()
-        #vehicleid= self.genvehicleid()
+        
         try:
             cursor.execute(query, (vehicleid, userid))
             cursor.commit()
@@ -177,9 +175,11 @@ class gasguzlrbackend():
         WHERE userID = ? 
         '''
         cursor = self.connecttodb().cursor()
-        cursor.execute(query,(userid))
-        rows=cursor.fetchone()
-        
+        try:
+            cursor.execute(query,(userid))
+            rows=cursor.fetchone()
+        except:
+            print("error in user verification _ backend")
         return str(rows.userID)==userid
         
     def authuser(self,userid):
@@ -189,8 +189,11 @@ class gasguzlrbackend():
         WHERE userID=?
         '''
         cursor = self.connecttodb().cursor()
-        cursor.execute(query,'1',userid)
-        cursor.commit()
+        try:
+            cursor.execute(query,'1',userid)
+            cursor.commit()
+        except:
+            print("error in user authentication__ backend")
 
 
 
@@ -209,7 +212,10 @@ class gasguzlrbackend():
         '''
         cursor = self.connecttodb().cursor()
         c=cursor.execute(query,(userid))
-        rows=c.fetchall()
+        try:
+            rows=c.fetchall()
+        except:
+            print("error in mpg entries retrieval__backend")
         data=[]
         for row in rows:
             data.append(row)
@@ -221,10 +227,11 @@ class gasguzlrbackend():
         select vehicleid from dbo.newvehicles where userid=?
         '''
         cursor = self.connecttodb().cursor()
-        c=cursor.execute(query,(userid))
-        rows=c.fetchone()
-        # data=[]
-        # for row in rows:
-        #     data.append(row)
+        try:
+            c=cursor.execute(query,(userid))
+            rows=c.fetchone()
+        except:
+            print("error in vehicle lookup__backend")
+       
 
         return rows
