@@ -6,6 +6,18 @@ from flask.json import jsonify
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField,SelectField
 from gzlrbackend import gasguzlrbackend 
 import os
+from bokeh.models import (HoverTool, FactorRange, Plot, LinearAxis, Grid,
+                          Range1d)
+from bokeh.models.glyphs import VBar
+from bokeh.plotting import figure
+from bokeh.resources import CDN
+from bokeh.embed import file_html
+from bokeh.embed import components
+from bokeh.models.sources import ColumnDataSource
+
+
+
+
 
 app=Flask(__name__)
 app.secret_key=os.urandom(12)
@@ -29,20 +41,31 @@ class User():
     def get_id(self):
         pass #working on actual login
 
+def dataviz(data):
+    x=[]
+    y=[]
+    for row in data:
+        x.append(str(row.fillGallons))
+        y.append(str(row.calcMPG))
 
-@app.route('/test')
-def sqlversion(version=gasguzlrbackend().getVersion()):
-    return render_template('welcome.html',data=version)
 
+    p=figure(x_range=x,plot_width=445,plot_height=225,x_axis_label='Tank gallons',y_axis_label='MPG')
+    p.vbar(x=x,top=y,width=0.9)
+    return p
+  
+
+# this returns and renders the main page
 @app.route('/')
 def landing():
     return render_template('welcome.html')
-
+#this displays the new user page and submits
+#the new user to the backend
 @app.route('/newuser')
 def newuser():
     userid=gasguzlrbackend().genuserid()
     gasguzlrbackend().adduser(userid)
     return render_template('newuser.html',newuserid=userid)
+#login page which accepts a get to load it and a post for processing
 
 @app.route('/login', methods=['GET','POST'])
 def userlogin():
@@ -51,7 +74,7 @@ def userlogin():
     if request.method == 'POST':
         username = request.form['login']
         if(gasguzlrbackend().verifyuser(request.form['login'])):
-            session['logged_in']= True
+            session['logged_in']= True #this is important for displaying elements on main app page
             url="/mpg/"+username
             return redirect(url) 
         else:
@@ -67,9 +90,7 @@ def mpgapp(username):
         
         vehcid=gasguzlrbackend().genvehicleid()
         mpgcalc=float(request.form['tripmiles'])/float(request.form['tankGallons'])
-        print(request.form['tripmiles'])
-        print(request.form['tankGallons'])
-        print(mpgcalc)
+        
 
         gasguzlrbackend().addmpgData(vehcid,request.form['tripmiles'],request.form['tankGallons'],mpgcalc)
         gasguzlrbackend().newaddvehicle(username,vehcid)
@@ -80,20 +101,23 @@ def mpgapp(username):
         try:
             if session['logged_in']:
                 mpgcount=gasguzlrbackend().countMPGEntries(username)
-                print(mpgcount)
+                
                 if(mpgcount == 0):
                     
                     return render_template('mpg.html',mpgcount=mpgcount)
                 else:
                     
-                    vehcid=gasguzlrbackend().getvehicle(username)
-                    print(vehcid.vehicleid)
-                    mpgdata=gasguzlrbackend().getmpgData(vehcid.vehicleid)
-                    print(mpgdata)
-                    return render_template('mpg.html',data=mpgdata,mpgcount=mpgcount,user=username,vehicleid=vehcid)
+                    vehcid=gasguzlrbackend().getvehicle(username) #vehicle assoc with username
+                    
+                    mpgdata=gasguzlrbackend().getmpgData(vehcid.vehicleid) #gets row object
+                    vizscript,vizdiv=components(dataviz(mpgdata))
+                    
+                    
+                    return render_template('mpg.html',data=mpgdata,mpgcount=mpgcount,user=username,vehicleid=vehcid,vizscript=vizscript,vizdiv=vizdiv)
             else:
                 return redirect('/login')
-        except:
+        except Exception as err: #if not logged in throws an exception
+            print(err)
             return redirect('/')
 
 @app.route('/mpg/<username>/<vehcid>/new', methods=['GET','POST'])
@@ -101,9 +125,7 @@ def newmpgentry(username,vehcid):
     if request.method == 'POST':
         #vehcid=gasguzlrbackend().genvehicleid()
         mpgcalc=float(request.form['tripmiles'])/float(request.form['tankGallons'])
-        print(request.form['tripmiles'])
-        print(request.form['tankGallons'])
-        print(mpgcalc)
+        
 
         gasguzlrbackend().addmpgData(vehcid,request.form['tripmiles'],request.form['tankGallons'],mpgcalc)
         gasguzlrbackend().newaddvehicle(username,vehcid)
@@ -115,9 +137,10 @@ def newmpgentry(username,vehcid):
         
             
         vehcid=gasguzlrbackend().getvehicle(username)
-        print(vehcid.vehicleid)
+        
         mpgdata=gasguzlrbackend().getmpgData(vehcid.vehicleid)
-        print(mpgdata)
+        
+        
         return render_template('newmpg.html',data=mpgdata,user=username,vehicleid=vehcid)
 
 @app.route('/logout')
@@ -127,4 +150,4 @@ def logout():
 
 if __name__ == '__main__':
     
-    app.run(port='5002')
+    app.run(port='5002',host="0.0.0.0")

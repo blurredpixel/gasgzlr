@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 {% block logout %}
+<link
+    href="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.css"
+    rel="stylesheet" type="text/css">
+<link
+    href="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.1.min.css"
+    rel="stylesheet" type="text/css">
+<link
+    href="https://cdn.pydata.org/bokeh/release/bokeh-tables-1.0.1.min.css"
+    rel="stylesheet" type="text/css">
+
+<script src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.js"></script>
+<script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.1.min.js"></script>
+
 <li class="nav-item">
     <form action="{{ url_for('logout')  }}" method="GET" >
         <button type="submit" class="btn btn-dark">Logout</button>
@@ -33,7 +46,7 @@
                             <form action="" method="post" role="form">
                                     <div class="form-group">
                                         <label for=""></label>
-                                        <input type="text" class="form-control" name="tripmiles" id="tripmiles" aria-describedby="helpId" placeholder="">
+                                        <input type="number" class="form-control" name="tripmiles" id="tripmiles" aria-describedby="helpId" placeholder="">
                                         <small id="helpId" class="form-text text-muted">Enter Trip Miles (Round to nearest mile)</small>
                                         <input type="text" class="form-control" name="tankGallons" id="tankGallons" aria-describedby="helpId" placeholder="">
                                         <small id="helpId" class="form-text text-muted">Enter FillUp Gallons</small>
@@ -58,6 +71,10 @@
 
         <h3>User: {{user}} </h3>
         <h3>Vehicle: {{ vehicleid.vehicleid }}</h3>
+        <div id ="dataviz">
+            {{vizscript|safe}}
+            {{vizdiv|safe}}
+        </div>
         <div class="container text-center">
         <table class="table">
             <thead>

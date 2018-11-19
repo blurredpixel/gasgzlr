@@ -4,7 +4,7 @@ def load(l):
     l.client.get("/")
 
 def newuser (l):
-    l.client.get("/newuser")
+    l.client.get("/login")
 
 class UserBehavior(TaskSet):
     tasks={newuser:2}
