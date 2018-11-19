@@ -13,3 +13,7 @@ This application uses the PYODBC driver connecting to a MSSQL server. It is serv
 Make MPG table editable
 
 Implement passcode and customer usernames
+
+## Testing
+
+Testing can be done at http://test.gasgzlr.com
