@@ -37,3 +37,8 @@ body
     margin-top: 1.5%;
 
 }
+
+#mpgtable{
+    position: absolute;
+    width:80%;
+}

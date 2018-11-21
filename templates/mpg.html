@@ -1,12 +1,9 @@
 {% extends "base.html" %}
 {%block scripts%}
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.18/r-2.2.2/datatables.min.js"></script>
-    
+<script src="{{ url_for('static',filename='js/dataTables.cellEdit.js') }}"></script>
 <script src="https://cdn.pydata.org/bokeh/release/bokeh-1.0.1.min.js"></script>
 <script src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-1.0.1.min.js"></script>
-<script>$(document).ready(function() {
-    $('#mpgtable').DataTable();
-} );</script>
 {%endblock%}
 
 {%block sheets%}
@@ -82,35 +79,47 @@
 
         
         {% else %}
-        <script>$('#mpgtable').DataTable();</script>
-        <h3>User: {{user}} </h3>
-        <h3>Vehicle: {{ vehicleid.vehicleid }}</h3>
-        <div id ="dataviz">
-            {{vizscript|safe}}
-            {{vizdiv|safe}}
+        
+            
+        <div class="row">
+            <div class="col-sm">
+                    <h3>User: {{user}} </h3>
+                    <h3>Vehicle: {{ vehicleid.vehicleid }}</h3>
+            </div>
+            <div class="col-sm">
+                <div id ="dataviz">
+                    {{vizscript|safe}}
+                    {{vizdiv|safe}}
+                </div>
+            </div>
         </div>
-        <div class="container text-center">
-        <table id="mpgtable" class="table">
-            <thead>
-                <tr>
-                    <th>VehicleID</th>
-                    <th>Trip Miles</th>
-                    <th>Fill-Up Gallons</th>
-                    <th>MPG</th>
-                </tr>
-            </thead>
-            {% for row in data %}
-            <tbody>
-                <tr>
-                    <td scope="row">{{ vehicleid.vehicleid }}</td>
-                    <td> {{ row.tankMiles }} </td>
-                    <td>{{ row.fillGallons }}</td>
-                    <td> {{ row.calcMPG }} </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        
+        <div class="row">
+                <div class="col-md-auto">
+                        <table id="mpgtable" class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>VehicleID</th>
+                                        <th>Trip Miles</th>
+                                        <th>Fill-Up Gallons</th>
+                                        <th>MPG</th>
+                                    </tr>
+                                </thead>
+                                {% for row in data %}
+                                <tbody>
+                                    <tr>
+                                        <td scope="row">{{ vehicleid.vehicleid }}</td>
+                                        <td> {{ row.tankMiles }} </td>
+                                        <td>{{ row.fillGallons }}</td>
+                                        <td> {{ row.calcMPG }} </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                </div>
         </div>
+        
+        
         
         <form action="{{ url_for('newmpgentry',username=user,vehcid=vehicleid.vehicleid)  }}" method="GET" >
             <button type="submit" class="btn btn-dark">Add Entry</button>

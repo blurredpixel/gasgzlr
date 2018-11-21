@@ -60,7 +60,7 @@ class gasguzlrbackend():
         cursor = self.connecttodb().cursor()
         
         try:
-            print(vehid)
+            
             cursor.execute(query, (vehid))
             rows=cursor.fetchall()
                 
